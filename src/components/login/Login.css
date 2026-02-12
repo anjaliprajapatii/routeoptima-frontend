@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- 1. 3D CONTAINER (FIXED FULL SCREEN) --- */
+.login-container {
+  position: fixed; /* Fix: Ye page hamesha screen par chipka rahega */
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: #0f172a; /* Dark Night Sky */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 500px;
+  z-index: 9999; /* Fix: Ye sabse upar dikhega, white background ke upar */
+}
+
+/* --- 2. ROAD ANIMATION --- */
+.road-wrapper {
+  position: absolute;
+  bottom: -100px;
+  width: 100%;
+  height: 100%;
+  transform: rotateX(60deg);
+  z-index: 0;
+}
+
+.road {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 200%;
+  background: linear-gradient(#334155, #0f172a);
+  box-shadow: 0 0 50px rgba(0,0,0,0.8);
+  border-left: 5px solid rgba(255,255,255,0.2);
+  border-right: 5px solid rgba(255,255,255,0.2);
+}
+
+.road::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 100%;
+  background: repeating-linear-gradient(180deg, #fff 0, #fff 50px, transparent 50px, transparent 100px);
+  animation: moveRoad 1s linear infinite;
+  box-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+
+@keyframes moveRoad {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+/* --- 3. GLASS CARD --- */
+.login-card {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  width: 90%;
+  max-width: 420px;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+
+/* --- HEADER FIX --- */
+/* --- BRAND HEADER (Container) --- */
+.brand-header {
+    display: flex;             /* Makes items sit side-by-side */
+    justify-content: center;   /* Centers everything horizontally */
+    align-items: center;       /* Centers items vertically */
+    gap: 12px;                 /* Adds space between Icon and Text */
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
+}
+
+/* 1. THE LOGO IMAGE (The Blue Pin) */
+.brand-img {
+    width: 45px;           /* Slightly smaller to fit better inline */
+    height: auto;
+    object-fit: contain;
+    
+    /* Remove block/margin auto so it sits inline */
+    display: inline-block; 
+    margin: 0; 
+    
+    filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.3));
+    animation: floatPin 3s ease-in-out infinite;
+}
+
+/* Fun Animation: Pin floats up and down gently */
+@keyframes floatPin {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); } /* Reduced movement for inline look */
+}
+
+/* 2. THE MAIN HEADING (Route...) */
+.brand-header h2 {
+    font-size: 32px;       
+    font-weight: 800;      
+    color: #1e293b;        
+    margin: 0;
+    letter-spacing: -1px;  
+    line-height: 1;
+    display: flex;          /* Ensures text aligns properly */
+    align-items: center;
+}
+
+/* 3. THE "Optima" TEXT (Blue Gradient) */
+.optima-text {
+    background: linear-gradient(180deg, #22d3ee 0%, #2563eb 50%, #1e3a8a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    
+    font-weight: 900;      
+    font-style: italic;    
+    padding-left: 2px;
+}
+
+/* 4. FALLBACK ICON */
+.logo-icon-fallback {
+    display: none;
+    font-size: 35px;
+    color: #2563eb;
+}
+
+
+/* Agar image hidden hai (error ki wajah se) to icon dikhao */
+.brand-img[style*="display: none"] + .logo-icon-fallback {
+  display: flex;
+}
+
+.brand-header h2 { font-size: 28px; font-weight: 800; color: #0f172a; margin: 0; }
+.optima-text { color: #2563eb; }
+
+/* --- INPUT FIX --- */
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.input-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.input-group input {
+  width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;
+  background-color: #f8fafc; font-size: 15px; outline: none; box-sizing: border-box;
+}
+.input-group input:focus { border-color: #2563eb; background: white; }
+
+/* Password Eye */
+.password-wrapper { position: relative; width: 100%; }
+.eye-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; }
+
+/* --- BUTTONS --- */
+.btn-primary {
+  width: 100%; padding: 12px; background: #2563eb; color: white;
+  border: none; border-radius: 8px; font-weight: 700; font-size: 16px;
+  cursor: pointer; transition: 0.3s; margin-top: 10px;
+}
+.btn-primary:hover { background: #1d4ed8; }
+
+/* Social Buttons (Visible but Dummy) */
+.social-buttons { display: flex; gap: 10px; margin-top: 15px; }
+.btn-social {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px; background: white; border: 1px solid #cbd5e1; border-radius: 8px;
+  font-size: 14px; font-weight: 600; cursor: pointer; color: #334155;
+}
+.btn-social:hover { background: #f1f5f9; }
+
+/* Footer & Messages */
+.forgot-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 20px; color: #64748b; }
+.divider { margin: 20px 0; font-size: 13px; color: #64748b; display: flex; align-items: center; }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #e2e8f0; }
+.divider span { padding: 0 10px; }
+
+.link-text { color: #2563eb; cursor: pointer; font-weight: 700; }
+.bottom-text { margin-top: 20px; font-size: 13px; color: #64748b; }
+.footer-text { position: absolute; bottom: 10px; color: rgba(255,255,255,0.4); font-size: 12px; z-index: 10; }
+
+.msg-box { padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; }
+.msg-box.error { background: #fee2e2; color: #dc2626; }
+.msg-box.success { background: #dcfce7; color: #16a34a; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+  .login-card { width: 90%; max-width: 100%; padding: 25px; }
+  .road { width: 100%; }
+}

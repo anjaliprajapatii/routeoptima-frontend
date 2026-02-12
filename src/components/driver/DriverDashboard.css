@@ -1,0 +1,101 @@
+/* --- APP LAYOUT --- */
+.driver-app {
+    position: relative; width: 100vw; height: 100vh;
+    background: #e2e8f0; font-family: 'Inter', sans-serif; overflow: hidden;
+}
+
+/* --- MAP --- */
+.map-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+.leaflet-routing-container { display: none !important; }
+
+/* --- FLOATING HEADER --- */
+.mobile-header {
+    position: absolute; top: 15px; left: 15px; right: 15px;
+    display: flex; justify-content: space-between; z-index: 1000;
+}
+.status-pill {
+    background: white; padding: 8px 16px; border-radius: 30px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-weight: 800; font-size: 14px;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.green { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+.dot.red { background: #ef4444; }
+
+/* --- UPDATED LOGOUT BUTTON CSS --- */
+.logout-btn {
+    background: white; 
+    border: none; 
+    padding: 0 15px;      /* Side padding for text and icon */
+    height: 40px; 
+    border-radius: 20px;  /* Pill shape logout button */
+    color: #ef4444; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px;             /* Space between text and icon */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    font-size: 14px; 
+    font-weight: 700;     /* Matching the status-pill weight */
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #fee2e2; /* Light red hover effect */
+}
+
+.logout-btn:active {
+    transform: scale(0.95);
+}
+
+/* --- REST OF YOUR CSS REMAINS SAME --- */
+
+/* --- BOTTOM SHEET --- */
+.bottom-sheet {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: white; border-top-left-radius: 25px; border-top-right-radius: 25px;
+    box-shadow: 0 -5px 30px rgba(0,0,0,0.15); z-index: 1000; padding: 25px;
+    transition: all 0.3s ease;
+    max-height: 85vh; overflow-y: auto;
+}
+
+/* --- LOGIN STATE --- */
+.welcome-text h3 { margin: 0 0 5px 0; color: #1e293b; }
+.welcome-text p { margin: 0 0 20px 0; color: #64748b; font-size: 14px; }
+.input-row { display: flex; align-items: center; background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+.input-row input { border: none; background: transparent; font-size: 18px; font-weight: 600; width: 100%; outline: none; margin-left: 10px; color: #334155; }
+.btn-go { width: 100%; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 900; color: white; border: none; cursor: pointer; background: #22c55e; letter-spacing: 0.5px; }
+
+/* --- ACTIVE ORDER STATE --- */
+.order-panel { display: flex; flex-direction: column; gap: 15px; }
+.sheet-handle { width: 40px; height: 4px; background: #e2e8f0; border-radius: 2px; margin: -10px auto 10px auto; }
+
+.order-info-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.customer-name { margin: 0; font-size: 20px; color: #1e293b; font-weight: 800; }
+.order-id { font-size: 13px; color: #64748b; font-weight: 600; }
+.live-tag { color: #ef4444; font-weight: 900; font-size: 10px; background: #fee2e2; padding: 2px 6px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+.price-tag { background: #dbeafe; color: #1e40af; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 18px; }
+
+.order-details-box { background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #f1f5f9; }
+.detail-item { display: flex; gap: 12px; margin-bottom: 15px; }
+.detail-item:last-child { margin-bottom: 0; }
+.detail-item .text-col { flex: 1; }
+.detail-item label { font-size: 10px; color: #94a3b8; font-weight: 800; letter-spacing: 0.5px; display: block; margin-bottom: 2px; }
+.detail-item p { margin: 0; font-size: 15px; color: #334155; line-height: 1.4; font-weight: 500; }
+
+.action-grid { display: flex; gap: 12px; }
+.btn-action { flex: 1; padding: 16px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: transform 0.1s; }
+.btn-action:active { transform: scale(0.96); }
+.btn-action.call { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+.btn-action.nav { background: #2563eb; color: white; }
+
+.btn-complete { 
+    width: 100%; padding: 20px; border-radius: 12px; 
+    background: #16a34a; color: white; 
+    font-size: 16px; font-weight: 900; letter-spacing: 0.5px;
+    border: none; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; gap: 10px; 
+    box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3); margin-top: 5px;
+}
+.btn-complete:active { transform: scale(0.98); background: #15803d; }

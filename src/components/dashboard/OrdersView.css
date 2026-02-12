@@ -1,0 +1,165 @@
+/* --- EXISTING CARD & TABLE STYLES (Keep these) --- */
+.card-box {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    margin: 20px;
+    font-family: 'Inter', sans-serif;
+    position: relative; /* Important for containment */
+}
+
+/* ... (Your existing Table, Form, and Button styles remain the same) ... */
+
+
+/* =========================================================
+   🔴 THE FIX: MODAL POPUP STYLING
+   ========================================================= */
+
+/* 1. The Dark Background Overlay */
+.modal-overlay {
+    position: fixed;       /* ⚡ FIX: Locks it to the screen viewport */
+    top: 0;
+    left: 0;
+    width: 100vw;          /* Full Width */
+    height: 100vh;         /* Full Height */
+    background: rgba(0, 0, 0, 0.6); /* Darker dim for focus */
+    display: flex;
+    align-items: center;   /* ⚡ Centers Vertically */
+    justify-content: center; /* ⚡ Centers Horizontally */
+    z-index: 9999;         /* ⚡ Ensures it sits on top of EVERYTHING */
+    backdrop-filter: blur(4px); /* Nice blur effect behind popup */
+}
+
+/* 2. The White Popup Box */
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 450px;      /* Keeps it compact */
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy enter animation */
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;      /* Prevents it from being too tall */
+}
+
+@keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* 3. Header */
+.modal-header {
+    background: #f8fafc;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h4 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 18px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close-btn:hover { color: #ef4444; }
+
+/* 4. Body (Scrollable List) */
+.modal-body {
+    padding: 10px 0;
+    overflow-y: auto;      /* Allows scrolling ONLY inside the list if many drivers */
+    max-height: 400px;
+}
+
+/* 5. Driver List Items */
+.driver-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.driver-item:hover {
+    background: #eff6ff;
+}
+
+.driver-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.d-name {
+    font-weight: 700;
+    color: #334155;
+    font-size: 15px;
+}
+
+.d-dist {
+    font-size: 12px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tag-best {
+    background: #dcfce7;
+    color: #166534;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.btn-select {
+    background: white;
+    border: 1px solid #cbd5e1;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    transition: all 0.2s;
+}
+
+.driver-item:hover .btn-select {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+/* Empty State */
+.no-drivers {
+    padding: 30px;
+    text-align: center;
+    color: #64748b;
+}
+
+.loading-text {
+    padding: 30px;
+    text-align: center;
+    color: #64748b;
+    font-style: italic;
+}
+
+.orders-tables th{
+    padding: 12px 2px;
+}

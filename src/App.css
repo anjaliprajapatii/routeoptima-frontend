@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden; /* Side scrollbar hatane ke liye */
+}
+
+.content-body {
+    padding: 0 !important; /* Forces 0px padding */
+    overflow-y: auto;
+    flex: 1;
+}
+
+
+/* Ye ensure karega ki Login Page puri screen le */
+#root {
+  width: 100%;
+  height: 100%;
+}
