@@ -24,15 +24,39 @@ const DriversView = ({ adminEmail }) => {
     }
   };
 
-  // --- 2. CREATE & UPDATE HANDLER ---
+  // --- 2. CREATE & UPDATE HANDLER WITH VALIDATION ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validation
+    // --- VALIDATION LOGIC START ---
+    
+    // 1. Basic Empty Check
     if (!form.name || !form.email || !form.mobile) {
         alert("Please fill in Name, Email and Mobile Number.");
         return;
     }
+
+    // 2. Email Validation (Regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+        alert("Invalid Email! Please enter a proper email (e.g., driver@gmail.com)");
+        return;
+    }
+
+    // 3. Mobile Number Validation (Exactly 10 digits)
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!mobileRegex.test(form.mobile)) {
+        alert("Invalid Mobile! Please enter exactly 10 digits (Numbers only).");
+        return;
+    }
+
+    // 4. Password Check (For New Driver)
+    if (!isEditing && form.password.length < 4) {
+        alert("Password must be at least 4 characters long.");
+        return;
+    }
+
+    // --- VALIDATION LOGIC END ---
 
     try {
         if (isEditing) {
@@ -43,7 +67,7 @@ const DriversView = ({ adminEmail }) => {
                 mobile: form.mobile,
                 password: form.password 
             });
-            alert("✅ Driver Updated Successfully!");
+            alert("Driver Updated Successfully!");
         } else {
             // Create Logic
             await axios.post("https://routeoptima-backend.onrender.com/api/auth/add-driver", { 
@@ -51,19 +75,17 @@ const DriversView = ({ adminEmail }) => {
                 driverName: form.name,
                 driverEmail: form.email,
                 driverPassword: form.password,
-                mobile: form.mobile // Mandatory
+                mobile: form.mobile 
             });
-            alert("✅ Driver Added Successfully!");
+            alert("Driver Added Successfully!");
         }
         
-        // Reset Form & Refresh List
         resetForm();
         fetchDrivers();
 
     } catch (err) {
-        // Safe Error Handling
         const errMsg = err.response?.data || "Server Error. Check Backend Console.";
-        alert("Action Failed: " + errMsg);
+        alert("Action Failed: " + (typeof errMsg === 'object' ? JSON.stringify(errMsg) : errMsg));
         console.error(err);
     }
   };
@@ -80,7 +102,6 @@ const DriversView = ({ adminEmail }) => {
     }
   };
 
-  // --- HELPER: START EDITING ---
   const handleEditClick = (driver) => {
       setIsEditing(true);
       setCurrentDriverId(driver.id);
@@ -93,7 +114,6 @@ const DriversView = ({ adminEmail }) => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // --- HELPER: CANCEL EDIT ---
   const resetForm = () => {
       setIsEditing(false);
       setCurrentDriverId(null);
@@ -123,15 +143,33 @@ const DriversView = ({ adminEmail }) => {
 
         <form onSubmit={handleSubmit} className="smart-form">
           <div className="input-group">
-            <input placeholder="Driver Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+            <input 
+              placeholder="Driver Name" 
+              value={form.name} 
+              onChange={e => setForm({...form, name: e.target.value})} 
+              required 
+            />
           </div>
           
           <div className="input-group">
-            <input placeholder="Mobile Number" value={form.mobile} onChange={e => setForm({...form, mobile: e.target.value})} required />
+            <input 
+              placeholder="Mobile Number (10 Digits)" 
+              type="text"
+              maxLength="10" 
+              value={form.mobile} 
+              onChange={e => setForm({...form, mobile: e.target.value.replace(/\D/g, '')})} 
+              required 
+            />
           </div>
 
           <div className="input-group">
-            <input placeholder="Email Address" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
+            <input 
+              placeholder="Email Address" 
+              type="email" 
+              value={form.email} 
+              onChange={e => setForm({...form, email: e.target.value})} 
+              required 
+            />
           </div>
           
           <div className="input-group">
@@ -189,12 +227,6 @@ const DriversView = ({ adminEmail }) => {
                           <span className={`status-badge ${d.isAvailable ? 'delivered' : 'pending'}`}>
                             {d.isAvailable ? "Available" : "On Duty"}
                           </span>
-                          {/* Show Current Order ID if busy */}
-                          {!d.isAvailable && d.currentOrderId && (
-                              <div style={{fontSize:'10px', marginTop:'4px', color:'#ea580c'}}>
-                                  Processing: {d.currentOrderId}
-                              </div>
-                          )}
                         </td>
                         <td>
                             <div style={{display:'flex', gap:'8px'}}>
@@ -208,14 +240,6 @@ const DriversView = ({ adminEmail }) => {
                         </td>
                     </tr>
                 ))}
-                {drivers.length === 0 && (
-                    <tr>
-                        <td colSpan="4" className="text-center" style={{padding:'40px', color:'#94a3b8'}}>
-                            <FaTruck size={30} style={{marginBottom:'10px', opacity:0.5}}/><br/>
-                            No Drivers Found. Register a new driver above.
-                        </td>
-                    </tr>
-                )}
             </tbody>
         </table>
       </div>

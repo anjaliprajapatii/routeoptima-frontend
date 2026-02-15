@@ -25,7 +25,7 @@ const OrdersView = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('https://routeoptima-backend.onrender.com/api/orders/all');
+      const res = await axios.get('https://routeoptima-backend.onrender.com/api/orders/my-orders?adminEmail=${user.email}');
       setOrders(res.data);
     } catch (err) { console.error("Error loading orders"); }
   };

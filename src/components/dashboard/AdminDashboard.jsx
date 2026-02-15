@@ -39,10 +39,10 @@ const AdminDashboard = ({ user, onLogout }) => {
   const fetchDashboardData = async () => {
     try {
       // ✅ URL UPDATED
-      const ordersRes = await axios.get('https://routeoptima-backend.onrender.com/api/orders/all').catch(() => ({ data: [] }));
+      const ordersRes = await axios.get(`https://routeoptima-backend.onrender.com/api/orders/my-orders?adminEmail=${user.email}`).catch(() => ({ data: [] }));
       const allOrders = ordersRes.data || [];
       const driversRes = await axios.get(`https://routeoptima-backend.onrender.com/api/auth/my-drivers?adminEmail=${user.email}`).catch(() => ({ data: [] }));
-      const drivers = driversRes.data || [];
+      const drivers = driversRes.data || []; 
       const totalRev = allOrders.reduce((sum, order) => sum + (Number(order.price) || 0), 0);
 
       setStats({
