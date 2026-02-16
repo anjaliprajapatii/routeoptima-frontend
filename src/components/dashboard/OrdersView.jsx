@@ -115,17 +115,23 @@ const OrdersView = ({ user }) => { // ✅ Prop received here
         }
     };
 
-    // --- HELPER FOR OPENING MODAL ---
+    // ==========================================
+    // 🟢 FIXED: Fetch only YOUR drivers (Isolation)
+    // ==========================================
     const handleOpenAssign = async (order, reassign = false) => {
         setSelectedOrder(order);
         setShowAssignModal(true);
         setIsReassigning(reassign);
         setLoadingDrivers(true);
         try {
-            const res = await axios.get(`https://routeoptima-backend.onrender.com/api/orders/${order.id}/available-drivers`);
+            // ✅ LOGIC FIX: Humne URL mein adminEmail pass kiya hai taaki Archana ke drivers na dikhen
+            const res = await axios.get(`https://routeoptima-backend.onrender.com/api/orders/${order.id}/available-drivers?adminEmail=${user.email}`);
             setAvailableDrivers(res.data);
-        } catch (err) { alert("Error fetching drivers."); }
-        finally { setLoadingDrivers(false); }
+        } catch (err) {
+            alert("Error fetching drivers");
+        } finally {
+            setLoadingDrivers(false);
+        }
     };
 
     return (
@@ -200,12 +206,16 @@ const OrdersView = ({ user }) => { // ✅ Prop received here
                         <div className="modal-body">
                             {loadingDrivers ? <p>Finding drivers...</p> : (
                                 <div className="driver-list">
-                                    {availableDrivers.map(driver => (
-                                        <div key={driver.id} className="driver-item" onClick={() => assignDriver(driver.id)}>
-                                            <span>{driver.name} (📍 {driver.distanceKm} km)</span>
-                                            <button className="btn-select">Select</button>
-                                        </div>
-                                    ))}
+                                    {availableDrivers.length === 0 ? (
+                                        <p style={{ textAlign: 'center', color: '#ef4444' }}>No available drivers found for your account.</p>
+                                    ) : (
+                                        availableDrivers.map(driver => (
+                                            <div key={driver.id} className="driver-item" onClick={() => assignDriver(driver.id)}>
+                                                <span>{driver.name} (📍 {driver.distanceKm} km)</span>
+                                                <button className="btn-select">Select</button>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             )}
                         </div>

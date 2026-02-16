@@ -4,6 +4,9 @@ import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
+// ✅ GLOBAL URL DEFINITION
+const API_BASE_URL = "https://routeoptima-backend.onrender.com";
+
 // --- 1. ICON FIX (Standard Leaflet Fix) ---
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -12,21 +15,23 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// --- 2.package ORDER ICON (Box) ---
+// --- 2. PACKAGE ORDER ICON (Box) ---
 const packageIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/2921/2921822.png', 
   iconSize: [35, 35],
   popupAnchor: [0, -15]
 });
 
-const DeliveryMap = () => {
+const DeliveryMap = ({ adminEmail }) => { // ✅ Prop added to receive email
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState({ total: 0, visible: 0 });
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!adminEmail) return; // Wait if email is not yet available
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/orders/all`);
+        // ✅ LOGIC FIX: Using Isolated URL with adminEmail
+        const res = await axios.get(`${API_BASE_URL}/api/orders/my-orders?adminEmail=${adminEmail}`);
         
         // 1. Only get Active Orders (Not Delivered)
         const activeOrders = res.data.filter(o => o.status !== 'DELIVERED');
@@ -40,19 +45,19 @@ const DeliveryMap = () => {
         setOrders(activeOrders);
 
       } catch (error) {
-        console.error("Error fetching orders:", error);
+        console.error("Error fetching orders for map:", error);
       }
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 5000); 
+    const interval = setInterval(fetchData, 5000); // Live update every 5 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [adminEmail]); // ✅ Dependency added
 
   return (
     <div style={{ position: 'relative', height: "100%", width: "100%", borderRadius:'12px', overflow:'hidden', border:'2px solid #2563eb' }}>
       
-      {/* --- DEBUG PANEL (To show you data is coming) --- */}
+      {/* --- DEBUG PANEL --- */}
       <div style={{
           position: 'absolute', top: '10px', right: '10px', zIndex: 999,
           background: 'rgba(255,255,255,0.9)', padding: '10px', borderRadius: '8px',
@@ -63,8 +68,8 @@ const DeliveryMap = () => {
               📍 On Map: {stats.visible}
           </div>
           {stats.visible === 0 && stats.total > 0 && (
-              <div style={{color: 'red', marginTop: '5px'}}>
-                  ⚠️ Coordinates are 0 in DB!
+              <div style={{color: 'red', marginTop: '5px', fontSize: '10px'}}>
+                  ⚠️ Waiting for Driver to set location!
               </div>
           )}
       </div>
@@ -81,7 +86,7 @@ const DeliveryMap = () => {
             const lat = order.dropLat && order.dropLat !== 0 ? order.dropLat : order.pickupLat;
             const lng = order.dropLng && order.dropLng !== 0 ? order.dropLng : order.pickupLng;
 
-            // If No Location, Skip
+            // If No Location, Skip this marker
             if (!lat || lat === 0 || !lng || lng === 0) return null;
 
             return (
