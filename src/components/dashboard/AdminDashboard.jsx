@@ -19,6 +19,7 @@ const Placeholder = ({ title }) => (
 );
 
 const AdminDashboard = ({ user, onLogout }) => {
+  // 1. Check if user exists
   if (!user) return <div className="loading-screen">Loading Dashboard...</div>;
 
   const [activeMenu, setActiveMenu] = useState('Dashboard');
@@ -32,17 +33,19 @@ const AdminDashboard = ({ user, onLogout }) => {
     setCurrentDate(date);
 
     fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 10000);
+    const interval = setInterval(fetchDashboardData, 10000); // 10 seconds auto refresh
     return () => clearInterval(interval);
   }, [user]);
 
   const fetchDashboardData = async () => {
     try {
-      // ✅ URL UPDATED
+      // ✅ URL UPDATED WITH ADMIN EMAIL FOR ISOLATION
       const ordersRes = await axios.get(`https://routeoptima-backend.onrender.com/api/orders/my-orders?adminEmail=${user.email}`).catch(() => ({ data: [] }));
       const allOrders = ordersRes.data || [];
+      
       const driversRes = await axios.get(`https://routeoptima-backend.onrender.com/api/auth/my-drivers?adminEmail=${user.email}`).catch(() => ({ data: [] }));
       const drivers = driversRes.data || []; 
+      
       const totalRev = allOrders.reduce((sum, order) => sum + (Number(order.price) || 0), 0);
 
       setStats({
@@ -51,8 +54,11 @@ const AdminDashboard = ({ user, onLogout }) => {
         pendingOrders: allOrders.filter(o => o.status !== 'DELIVERED').length,
         revenue: totalRev
       });
-      setRecentOrders(allOrders.slice(-6).reverse());
-    } catch (err) { console.log("Using fallback data"); }
+      
+      setRecentOrders(allOrders.slice(-6).reverse()); // Show latest 6 orders
+    } catch (err) { 
+      console.log("Error fetching stats, using zeroed data"); 
+    }
   };
 
   const getInitials = (name) => {
@@ -64,6 +70,7 @@ const AdminDashboard = ({ user, onLogout }) => {
   return (
     <div className="admin-container">
       <div className={`sidebar-overlay ${isSidebarOpen ? 'show' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      
       <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="brand-section">
           <h2>
@@ -72,6 +79,7 @@ const AdminDashboard = ({ user, onLogout }) => {
           </h2>
           <button className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}><FaTimes /></button>
         </div>
+
         <nav className="menu-list">
           {['Dashboard', 'Orders', 'Drivers', 'MapView'].map((item) => (
              <div key={item} className={`menu-item ${activeMenu === item ? 'active' : ''}`} onClick={() => { setActiveMenu(item); setIsSidebarOpen(false); }}>
@@ -83,14 +91,15 @@ const AdminDashboard = ({ user, onLogout }) => {
              </div>
           ))}
         </nav>
+
         <div className="sidebar-footer">
-           <div className="user-info-box">
+            <div className="user-info-box">
               <small>Logged in as</small>
               <strong>{user.name}</strong>
-           </div>
-           <button onClick={onLogout} className="logout-btn-red">
-             <FaSignOutAlt /> <span>Sign Out</span>
-           </button>
+            </div>
+            <button onClick={onLogout} className="logout-btn-red">
+              <FaSignOutAlt /> <span>Sign Out</span>
+            </button>
         </div>
       </aside>
 
@@ -103,7 +112,7 @@ const AdminDashboard = ({ user, onLogout }) => {
           <div className="header-right">
              <div className="search-bar">
                 <FaSearch className="search-icon" style={{color:'#94a3b8'}} />
-                <input type="text" placeholder="Search orders, drivers..." />
+                <input type="text" placeholder="Search orders..." />
              </div>
              <div className="notif-wrapper">
                  <button className="icon-btn"><FaBell /></button>
@@ -114,7 +123,8 @@ const AdminDashboard = ({ user, onLogout }) => {
         </header>
 
         <div className="content-body">
-           {activeMenu === 'Dashboard' && (
+            {/* 🏠 DASHBOARD HOME VIEW */}
+            {activeMenu === 'Dashboard' && (
               <div className="dashboard-home">
                  <div className="welcome-banner">
                     <div className="banner-content">
@@ -126,6 +136,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                        <button className="btn-white" onClick={() => setActiveMenu('Orders')}><FaPlus /> Create New Order</button>
                     </div>
                  </div>
+
                  <div className="stats-grid">
                     <div className="stat-card">
                        <div className="stat-icon blue-bg"><FaBox /></div>
@@ -144,6 +155,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                        <div className="stat-info"><p>Revenue</p><h3>₹{stats.revenue.toLocaleString()}</h3></div>
                     </div>
                  </div>
+
                  <div className="content-split">
                     <div className="card-box orders-box">
                        <div className="card-header-compact">
@@ -165,11 +177,12 @@ const AdminDashboard = ({ user, onLogout }) => {
                                        <td className="text-right fw-bold">₹{order.price}</td>
                                     </tr>
                                  ))}
-                                 {recentOrders.length === 0 && <tr><td colSpan="4" className="text-center">No recent activity</td></tr>}
+                                 {recentOrders.length === 0 && <tr><td colSpan="4" className="text-center">No orders found.</td></tr>}
                               </tbody>
                            </table>
                        </div>
                     </div>
+
                     <div className="card-box map-box">
                        <div className="card-header-compact"><h3>Live Fleet Map</h3></div>
                        <div className="map-wrapper-small">
@@ -178,10 +191,16 @@ const AdminDashboard = ({ user, onLogout }) => {
                     </div>
                  </div>
               </div>
-           )}
-           {activeMenu === 'Orders' && (OrdersView ? <OrdersView /> : <Placeholder title="Orders" />)}
-           {activeMenu === 'Drivers' && (DriversView ? <DriversView adminEmail={user.email} /> : <Placeholder title="Drivers" />)}
-           {activeMenu === 'MapView' && (DeliveryMap ? <div className="full-map-container"><DeliveryMap adminEmail={user.email} /></div> : <Placeholder title="Map" />)}
+            )}
+
+            {/* 📦 ORDERS VIEW */}
+            {activeMenu === 'Orders' && (OrdersView ? <OrdersView user={user} /> : <Placeholder title="Orders" />)}
+
+            {/* 👥 DRIVERS VIEW */}
+            {activeMenu === 'Drivers' && (DriversView ? <DriversView adminEmail={user.email} /> : <Placeholder title="Drivers" />)}
+
+            {/* 🗺️ MAP VIEW */}
+            {activeMenu === 'MapView' && (DeliveryMap ? <div className="full-map-container"><DeliveryMap adminEmail={user.email} /></div> : <Placeholder title="Map" />)}
         </div>
       </main>
     </div>
