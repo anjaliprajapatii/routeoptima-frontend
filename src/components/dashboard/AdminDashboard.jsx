@@ -12,6 +12,9 @@ import OrdersView from './OrdersView';
 import DriversView from './DriversView';
 import DeliveryMap from '../DeliveryMap'; 
 
+// ✅ GLOBAL URL DEFINITION (TAAKI ERROR NA AAYE)
+const API_BASE_URL = "https://routeoptima-backend.onrender.com";
+
 const Placeholder = ({ title }) => (
   <div className="p-20 text-center text-muted" style={{padding:'40px', color:'#94a3b8'}}>
     {title} Module Loaded
@@ -39,11 +42,11 @@ const AdminDashboard = ({ user, onLogout }) => {
 
   const fetchDashboardData = async () => {
     try {
-      // ✅ URL UPDATED WITH ADMIN EMAIL FOR ISOLATION
-      const ordersRes = await axios.get(`https://routeoptima-backend.onrender.com/api/orders/my-orders?adminEmail=${user.email}`).catch(() => ({ data: [] }));
+      // ✅ FIXED: Using backticks and API_BASE_URL variable
+      const ordersRes = await axios.get(`${API_BASE_URL}/api/orders/my-orders?adminEmail=${user.email}`).catch(() => ({ data: [] }));
       const allOrders = ordersRes.data || [];
       
-      const driversRes = await axios.get(`https://routeoptima-backend.onrender.com/api/auth/my-drivers?adminEmail=${user.email}`).catch(() => ({ data: [] }));
+      const driversRes = await axios.get(`${API_BASE_URL}/api/auth/my-drivers?adminEmail=${user.email}`).catch(() => ({ data: [] }));
       const drivers = driversRes.data || []; 
       
       const totalRev = allOrders.reduce((sum, order) => sum + (Number(order.price) || 0), 0);
@@ -57,7 +60,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       
       setRecentOrders(allOrders.slice(-6).reverse()); // Show latest 6 orders
     } catch (err) { 
-      console.log("Error fetching stats, using zeroed data"); 
+      console.log("Error fetching stats, using zeroed data", err); 
     }
   };
 
@@ -193,7 +196,7 @@ const AdminDashboard = ({ user, onLogout }) => {
               </div>
             )}
 
-            {/* 📦 ORDERS VIEW */}
+            {/* 📦 ORDERS VIEW - ✅ FIXED: PASSING USER PROP */}
             {activeMenu === 'Orders' && (OrdersView ? <OrdersView user={user} /> : <Placeholder title="Orders" />)}
 
             {/* 👥 DRIVERS VIEW */}
